@@ -1,0 +1,7 @@
+# dsh-hardware-monitor bundle mount.
+# A NEW plugin contributes a brand-new profile entry, so the row is an `insert:`
+# (a bare `- id:` would patch an existing entry by id and fail silently).
+# Adding a new `insert:` requires a web-server restart to take effect.
+- insert:
+    - id: dsh-hardware-monitor
+      name: 'dsh-hardware-monitor'
