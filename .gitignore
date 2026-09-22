@@ -1,3 +1,7 @@
 node_modules/
 *.tmp
 .dsh/
+
+# jo's private working notes — never publish these to the public repo
+/AGENTS.md
+/TODO.md
