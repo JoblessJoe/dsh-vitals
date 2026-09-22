@@ -48,7 +48,7 @@ jobs:
           git add package.json lib/
           git commit -m "chore: release v${{ steps.version.outputs.version }} [skip ci]"
           git tag "v${{ steps.version.outputs.version }}"
-          git push origin main --follow-tags
+          git push origin main "v${{ steps.version.outputs.version }}"
 
       - name: Cut a GitHub Release
         env:
