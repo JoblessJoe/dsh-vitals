@@ -1,9 +1,11 @@
-name: Auto-version & publish
+name: Auto-version
 
 # Every push to main bumps the patch version, rebuilds lib/ (in case a commit
-# forgot to — see AGENTS.md's build-step warning), commits that back with
-# [skip ci], and publishes to npm. The [skip ci] guard + the actor check both
-# stop the bot's own push from re-triggering this workflow.
+# forgot to — see AGENTS.md's build-step warning), commits that back, tags
+# it, and cuts a GitHub Release. GitHub-only — no npm publish, no token to
+# maintain; npm publish stays a manual `npm publish` when actually wanted.
+# The [skip ci] guard + actor check stop the bot's own push from
+# re-triggering this workflow.
 
 on:
   push:
@@ -13,7 +15,7 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  version:
     if: >-
       github.actor != 'github-actions[bot]' &&
       !contains(github.event.head_commit.message, '[skip ci]')
@@ -26,7 +28,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         run: npm install
@@ -34,21 +35,13 @@ jobs:
       - name: Rebuild lib/ (safety net if a commit forgot)
         run: node scripts/build.mjs
 
-      - name: Bump patch version (working tree only, not committed yet)
+      - name: Bump patch version
         id: version
         run: |
           npm version patch --no-git-tag-version
           echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
-      # Publish BEFORE committing the bump: if this fails (e.g. NPM_TOKEN
-      # missing/invalid), the job stops here and nothing lands on git — no
-      # git/npm version drift from a bumped-but-never-published commit.
-      - name: Publish to npm
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Commit the now-published version bump + any rebuilt lib/
+      - name: Commit the bump + any rebuilt lib/, tag it
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -56,3 +49,8 @@ jobs:
           git commit -m "chore: release v${{ steps.version.outputs.version }} [skip ci]"
           git tag "v${{ steps.version.outputs.version }}"
           git push origin main --follow-tags
+
+      - name: Cut a GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "v${{ steps.version.outputs.version }}" --generate-notes --title "v${{ steps.version.outputs.version }}"
