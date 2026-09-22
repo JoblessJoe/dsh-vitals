@@ -1,15 +1,14 @@
 # dsh-vitals
 
-A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) Web-GUI plugin that shows **live hardware load** in a dedicated right-sidebar tab — a self-contained, dependency-free companion to `btop`.
+A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) Web-GUI plugin that shows **live hardware load** right in the web GUI — a self-contained, dependency-free companion to `btop`. Opens as a full tab next to Chat/Trajectory, or docked beside a session in the right sidebar.
 
 ## What it shows
 
-- **CPU** — overall utilisation, a live sparkline, and per-core load (every physical core, any count)
+- **CPU** — overall utilisation, a live 60s sparkline, highest temperature reading, and per-core load (every physical core, any count) — with per-thermal-zone detail when there's more than one sensor
 - **Memory** — used / available / total with utilisation %
-- **CPU temperature** — highest reading plus per-thermal-zone values
 - **GPUs** — one card each: name, temperature, utilisation, power draw, and VRAM (used / total)
 
-Data is sampled host-side on every poll (~1 s) and rendered live in the tab.
+Data is sampled host-side on every poll (~0.5 s) and rendered live.
 
 ## How it works
 
@@ -18,6 +17,18 @@ Data is sampled host-side on every poll (~1 s) and rendered live in the tab.
   with **no privileged access** and returns JSON.
 - **Client** — a single self-contained bundle that polls the route and draws
   the panels with inline styles (no CSS pipeline, no assets).
+
+### Where it shows up
+
+Two access points, both live the moment the plugin is bundled — no setup:
+
+- **A full `Hardware` tab** next to **Chat** / **Trajectory** at the top of
+  the conversation view. The dedicated way to watch the box while you're not
+  actively chatting.
+- **Docked in the right sidebar**, alongside a session: open the right
+  sidebar, click **+** (add tab), pick **Hardware** from the Guide list. Lets
+  you chat and watch load at the same time. (Every dsh "page type" plugin
+  opens this way — nothing dsh-vitals-specific about the click path.)
 
 ### Platform support
 
@@ -34,11 +45,12 @@ supported; any CPU (core count and vendor) is handled.
 
 ## Install
 
-The plugin ships as an npm package. From your dsh **web profile** (the pnpm
-workspace that backs your web GUI, e.g. `~/.dsh/profiles/web/`):
+Not on the npm registry (yet) — install straight from GitHub. From your dsh
+**web profile** (the pnpm workspace that backs your web GUI, e.g.
+`~/.dsh/profiles/web/`):
 
 ```bash
-pnpm add dsh-vitals
+pnpm add github:JoblessJoe/dsh-vitals
 ```
 
 Then add it to the profile's bundle list so the host loads it:
@@ -46,13 +58,16 @@ Then add it to the profile's bundle list so the host loads it:
 ```jsonc
 // package.json
 {
-  "dependencies": { "dsh-vitals": "^0.1.0" },
+  "dependencies": { "dsh-vitals": "github:JoblessJoe/dsh-vitals" },
   "dsh": { "profile": { "bundles": [ /* …existing… */ "dsh-vitals" ] } }
 }
 ```
 
-Restart your dsh web service and open the web GUI — the **Hardware** tab appears
-in the right sidebar.
+The repo ships its built `lib/` output committed, so no build step runs on
+install — `pnpm add` alone is enough.
+
+Restart your dsh web service and open the web GUI — see
+[Where it shows up](#where-it-shows-up) above for how to find it.
 
 > New bundles are registered from the profile's `bundles` array, so a one-time
 > service restart is required the first time you add it.
