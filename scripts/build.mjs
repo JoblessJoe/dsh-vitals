@@ -1,4 +1,4 @@
-// Build dsh-hardware-monitor: host ESM + client CJS wrapped in the
+// Build dsh-vitals: host ESM + client CJS wrapped in the
 // window.__ModuleLoader__ banner. Run with: node scripts/build.mjs
 import { build } from 'esbuild'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
@@ -51,7 +51,7 @@ await build({
 
 const body = await readFile(clientOut, 'utf8')
 const banner =
-  `// dsh-hardware-monitor client bundle (esbuild CJS + __ModuleLoader__ banner). Do not edit.\n` +
+  `// dsh-vitals client bundle (esbuild CJS + __ModuleLoader__ banner). Do not edit.\n` +
   `window.__ModuleLoader__.load({id:"${pkgName}",factory:Pt=>{\n` +
   `var module={exports:{}},exports=module.exports,require=Pt;\n` +
   body +

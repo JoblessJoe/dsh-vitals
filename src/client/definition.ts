@@ -12,7 +12,7 @@ import type { SidebarRightTabDefinition } from '@deepseek-ai/dsh-client-ui-sideb
 export const HARDWARE_KIND = 'hardware'
 
 /** This implementation's identity in the tab system: the key its body registers under. */
-export const HARDWARE_ID = 'dsh-hardware-monitor'
+export const HARDWARE_ID = 'dsh-vitals'
 
 /**
  * The hardware type's registry definition.

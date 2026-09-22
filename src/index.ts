@@ -1,4 +1,4 @@
-// dsh-hardware-monitor — host half.
+// dsh-vitals — host half.
 //
 // Registers a GET-only route on the dsh web server that reports live hardware
 // load, polled by the client tab at ~1s. Reads /proc and /sys (no privileged
@@ -78,7 +78,7 @@ function cpuModelOnce(): string | null {
 function corePct(prev: number[] | undefined, now: number[]): number {
   if (!prev) return 0
   const dTotal = now.reduce((a, b, i) => a + (b - (prev[i] ?? b)), 0)
-  const dIdle = (now[4] ?? 0) - (prev[4] ?? 0)
+  const dIdle = (now[3] ?? 0) - (prev[3] ?? 0)
   if (dTotal <= 0) return 0
   return Math.max(0, Math.min(100, (1 - dIdle / dTotal) * 100))
 }
@@ -210,7 +210,7 @@ async function sample(): Promise<HwData> {
 }
 
 // --- HTTP wiring -------------------------------------------------------
-const DATA_ENDPOINT = '/plugins/dsh-hardware-monitor/data'
+const DATA_ENDPOINT = '/plugins/dsh-vitals/data'
 
 function send(res: ServerResponse, code: number, body: string): void {
   res.writeHead(code, {
@@ -235,5 +235,5 @@ export function apply(ctx: Context, _config?: unknown): void {
       },
     })
     return () => { dispose() }
-  }, 'hardware-monitor: /plugins/dsh-hardware-monitor/data')
+  }, 'vitals: /plugins/dsh-vitals/data')
 }
