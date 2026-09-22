@@ -43,7 +43,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO/dsh-vitals.git"
+    "url": "git+https://github.com/JoblessJoe/dsh-hardware-vitals.git"
   },
   "keywords": [
     "deepseek",
