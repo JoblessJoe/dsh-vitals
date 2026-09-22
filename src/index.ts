@@ -143,8 +143,9 @@ async function sampleTemp(): Promise<TempStat> {
         const type = readFileSync(`/sys/class/thermal/${z}/type`, 'utf8').trim()
         const raw = Number(readFileSync(`/sys/class/thermal/${z}/temp`, 'utf8').trim())
         if (!Number.isFinite(raw)) continue
-        // Most zones report millidegrees; some report 1/10 deg or deg. Heuristic.
-        const temp = raw > 10000 ? raw / 1000 : raw / 100
+        // The kernel's thermal sysfs ABI (Documentation/ABI/testing/sysfs-class-thermal)
+        // documents this file as always millidegree Celsius — no heuristic needed.
+        const temp = raw / 1000
         if (temp < 0 || temp > 200) continue
         zones.push({ name: type || z, temp: Math.round(temp * 10) / 10 })
       } catch { /* skip unreadable zone */ }

@@ -23,8 +23,8 @@ export interface HwData {
 }
 
 const DATA_URL = '/plugins/dsh-vitals/data'
-const HISTORY = 40
-const POLL_MS = 1000
+const HISTORY = 120
+const POLL_MS = 500
 
 // --- btop-ish palette --------------------------------------------------
 const C = {
@@ -68,6 +68,11 @@ function barColor(pct: number): string {
   if (pct >= 60) return C.warn
   return C.ok
 }
+// Maps a raw Celsius reading onto the same 0-100 scale barColor() grades,
+// so "warn"/"bad" actually land near real CPU warning/throttle points
+// (~69°C / ~85°C) instead of only tripping past 110-140°C.
+const TEMP_LO = 30, TEMP_HI = 95
+const tempPct = (c: number): number => Math.max(0, Math.min(100, ((c - TEMP_LO) / (TEMP_HI - TEMP_LO)) * 100))
 const gb = (kb: number): string => (kb / 1024 / 1024).toFixed(1)
 const pct1 = (n: number | null): string => (n == null ? '—' : `${Math.round(n)}%`)
 const n1 = (n: number | null): string => (n == null ? '—' : n.toFixed(1))
@@ -83,17 +88,25 @@ function Bar({ pct, color }: { pct: number; color?: string }): ReactNode {
 }
 
 function Sparkline({ samples }: { samples: number[] }): ReactNode {
-  const w = 100, h = 34
+  const w = 100, h = 40
   if (samples.length < 2) return <div style={{ height: h }} />
   const step = w / (HISTORY - 1)
+  const n = samples.length
+  // samples is oldest→newest; anchor the newest sample to the right edge
+  // (x=w) so the graph scrolls right-to-left like btop's, not backwards.
   const pts = samples.map((v, i) => {
-    const x = (samples.length - 1 - i) * step
+    const x = w - (n - 1 - i) * step
     const y = h - (Math.max(0, Math.min(100, v)) / 100) * (h - 2) - 1
     return `${x.toFixed(1)},${y.toFixed(1)}`
-  }).join(' ')
+  })
+  const line = pts.join(' ')
+  const firstX = pts[0]!.split(',')[0]
+  const lastX = pts[pts.length - 1]!.split(',')[0]
+  const area = `${firstX},${h} ${line} ${lastX},${h}`
   return (
     <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{ display: 'block' }}>
-      <polyline points={pts} fill="none" stroke={C.accent} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      <polygon points={area} fill={C.accent} fillOpacity={0.15} stroke="none" />
+      <polyline points={line} fill="none" stroke={C.accent} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
     </svg>
   )
 }
@@ -103,7 +116,7 @@ function CoreBar({ idx, v }: { idx: number; v: number }): ReactNode {
     <div style={S.row}>
       <span style={S.chip}>{idx}</span>
       <Bar pct={v} />
-      <span style={{ ...S.chip, minWidth: 30 }}>{Math.round(v)}</span>
+      <span style={{ ...S.chip, minWidth: 34 }}>{Math.round(v)}%</span>
     </div>
   )
 }
@@ -138,11 +151,24 @@ function GpuBox({ g, t }: { g: HwGpu; t: TranslateNS<'hardwareMonitor'> }): Reac
   )
 }
 
-export function HardwareBody({ t }: PropsLocale<'hardwareMonitor'>): ReactNode {
+// A raw 0.5s sample swings a lot (single-core bursts, scheduler noise); average
+// the last ~10s of samples so the headline number and per-core bars settle
+// instead of jumping every poll. The sparkline plots this same smoothed series.
+const AVG_SAMPLES = Math.round(10_000 / POLL_MS)
+const avg = (xs: readonly number[]): number => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0
+
+/** Polls the host route at POLL_MS, smooths CPU total + per-core over the last ~10s. Shared by every view. */
+export function useHardwareData(): {
+  data: HwData | null; err: string | null; retry: () => void
+  history: number[]; cpuPct: number; corePcts: number[]
+} {
   const [data, setData] = useState<HwData | null>(null)
   const [err, setErr] = useState<string | null>(null)
   const [tick, setTick] = useState(0)
-  const histRef = useRef<number[]>([])
+  const totalHistRef = useRef<number[]>([])
+  const smoothedHistRef = useRef<number[]>([])
+  const coreHistRef = useRef<number[][]>([])
+  const [corePcts, setCorePcts] = useState<number[]>([])
 
   useEffect(() => {
     let alive = true
@@ -152,7 +178,14 @@ export function HardwareBody({ t }: PropsLocale<'hardwareMonitor'>): ReactNode {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const json = (await res.json()) as HwData
         if (!alive) return
-        histRef.current = [...histRef.current.slice(-(HISTORY - 1)), json.cpu.total]
+
+        totalHistRef.current = [...totalHistRef.current.slice(-(HISTORY - 1)), json.cpu.total]
+        const smoothedTotal = avg(totalHistRef.current.slice(-AVG_SAMPLES))
+        smoothedHistRef.current = [...smoothedHistRef.current.slice(-(HISTORY - 1)), smoothedTotal]
+
+        coreHistRef.current = [...coreHistRef.current.slice(-(AVG_SAMPLES - 1)), json.cpu.cores]
+        setCorePcts(json.cpu.cores.map((_, i) => avg(coreHistRef.current.map(snap => snap[i] ?? 0))))
+
         setData(json)
         setErr(null)
       } catch (e) {
@@ -164,6 +197,17 @@ export function HardwareBody({ t }: PropsLocale<'hardwareMonitor'>): ReactNode {
     return () => { alive = false; clearInterval(id) }
   }, [tick])
 
+  return {
+    data, err, retry: () => setTick(x => x + 1),
+    history: smoothedHistRef.current,
+    cpuPct: smoothedHistRef.current.at(-1) ?? 0,
+    corePcts,
+  }
+}
+
+export function HardwareBody({ t }: PropsLocale<'hardwareMonitor'>): ReactNode {
+  const { data, err, retry, history, cpuPct, corePcts } = useHardwareData()
+
   if (err && !data) {
     return (
       <div style={S.root}>
@@ -171,7 +215,7 @@ export function HardwareBody({ t }: PropsLocale<'hardwareMonitor'>): ReactNode {
           <span style={S.dim}>{t('error')}：{err}</span>
           <button
             style={{ alignSelf: 'flex-start', background: C.track, color: C.text, border: `1px solid ${C.border}`, borderRadius: 6, padding: '4px 10px', cursor: 'pointer' }}
-            onClick={() => setTick(x => x + 1)}
+            onClick={retry}
           >
             {t('retry')}
           </button>
@@ -194,15 +238,35 @@ export function HardwareBody({ t }: PropsLocale<'hardwareMonitor'>): ReactNode {
         </div>
         <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end' }}>
           <div>
-            <span style={{ ...S.big, color: barColor(cpu.total) }}>{Math.round(cpu.total)}%</span>
+            <span style={{ ...S.big, color: barColor(cpuPct) }}>{Math.round(cpuPct)}%</span>
             <div style={S.dim}>{t('cpu.overall')}</div>
           </div>
-          <div style={{ flex: 1 }}><Sparkline samples={histRef.current} /></div>
+          <div>
+            <span style={{ ...S.big, fontSize: 20, color: temp.overall == null ? C.dim : barColor(tempPct(temp.overall)) }}>
+              {temp.overall == null ? '—' : `${Math.round(temp.overall)}°`}
+            </span>
+            <div style={S.dim}>{t('temp.max')}</div>
+          </div>
+          <div style={{ flex: 1 }}><Sparkline samples={history} /></div>
         </div>
         <div style={{ ...S.row, marginTop: 4 }}><span style={S.dim}>{t('cpu.cores')} · {cpu.cores.length}</span></div>
         <div style={S.grid}>
-          {cpu.cores.map((v, i) => <CoreBar key={i} idx={i} v={v} />)}
+          {corePcts.map((v, i) => <CoreBar key={i} idx={i} v={v} />)}
         </div>
+        {temp.zones.length > 1 && (
+          <>
+            <div style={{ ...S.row, marginTop: 4 }}><span style={S.dim}>{t('section.temp')} · {temp.zones.length}</span></div>
+            <div style={S.grid}>
+              {temp.zones.map((z, i) => (
+                <div key={i} style={S.row}>
+                  <span style={{ ...S.dim, minWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{z.name}</span>
+                  <Bar pct={tempPct(z.temp)} />
+                  <span style={{ ...S.chip, minWidth: 40 }}>{`${Math.round(z.temp)}°`}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Memory */}
@@ -216,29 +280,6 @@ export function HardwareBody({ t }: PropsLocale<'hardwareMonitor'>): ReactNode {
           <Bar pct={mem.usedPct} color={C.accent} />
           <span style={{ ...S.chip, minWidth: 90 }}>{`${gb(mem.usedKb)} / ${gb(mem.totalKb)} GB`}</span>
         </div>
-      </div>
-
-      {/* Temperature */}
-      <div style={S.box}>
-        <div style={S.head}>
-          <span style={S.title}>{t('section.temp')}</span>
-          <span style={{ ...S.big, fontSize: 18, color: temp.overall == null ? C.dim : barColor((temp.overall - 40) / 1.2) }}>
-            {temp.overall == null ? '—' : `${Math.round(temp.overall)} °C`}
-          </span>
-        </div>
-        {temp.zones.length === 0
-          ? <span style={S.dim}>{t('temp.none')}</span>
-          : (
-            <div style={S.grid}>
-              {temp.zones.map((z, i) => (
-                <div key={i} style={S.row}>
-                  <span style={{ ...S.dim, minWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{z.name}</span>
-                  <Bar pct={Math.max(0, (z.temp - 20) / 1.3)} />
-                  <span style={{ ...S.chip, minWidth: 40 }}>{`${Math.round(z.temp)}°`}</span>
-                </div>
-              ))}
-            </div>
-          )}
       </div>
 
       {/* GPUs */}

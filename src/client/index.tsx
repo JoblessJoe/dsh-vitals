@@ -8,6 +8,7 @@
 
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
+import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
 import { en, zh } from './locales'
 import { HARDWARE_ID, HARDWARE_KIND, hardwareDefinition } from './definition'
@@ -18,7 +19,7 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
     hardwareMonitor:
       | 'tab.title' | 'guide.title' | 'guide.description'
       | 'section.cpu' | 'section.mem' | 'section.temp' | 'section.gpu'
-      | 'cpu.overall' | 'cpu.cores' | 'mem.used' | 'temp.max' | 'temp.none'
+      | 'cpu.overall' | 'cpu.cores' | 'mem.used' | 'temp.max'
       | 'gpu.none' | 'gpu.util' | 'gpu.power' | 'gpu.mem' | 'gpu.temp'
       | 'loading' | 'error' | 'retry'
   }
@@ -45,6 +46,17 @@ export function apply(ctx: ClientContext): void {
   // Title: a page-type tab shows its definition title on the chip; registering
   // a seat is optional. Kept minimal (no seat) — the chip falls back to the
   // registered definition's title, exactly like the text preview's chip path.
+
+  // Full-size main-panel tab, next to Chat/Trajectory — same
+  // 'conversation.view' slot those two register on (ui-chat's/ui-trajectory's
+  // own apply.ts). No `inject` needed: HardwareBody reads only `t`, not
+  // anything session-scoped, so the per-session render is just the same
+  // global live view every other surface here already shows.
+  ctx.effect(
+    () => ctx.slots.inject('conversation.view', () =>
+      ctx.slots.register({ name: 'conversation.view', id: HARDWARE_ID, order: 20, locale: 'hardwareMonitor', label: () => t('tab.title') }, HardwareBody)),
+    'dsh-vitals: conversation tab',
+  )
 }
 
 export { HARDWARE_ID, HARDWARE_KIND }
