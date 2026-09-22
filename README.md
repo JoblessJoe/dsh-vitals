@@ -1,4 +1,4 @@
-# dsh-hardware-monitor
+# dsh-vitals
 
 A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) Web-GUI plugin that shows **live hardware load** in a dedicated right-sidebar tab — a self-contained, dependency-free companion to `btop`.
 
@@ -14,7 +14,7 @@ Data is sampled host-side on every poll (~1 s) and rendered live in the tab.
 ## How it works
 
 - **Host** — a `GET`-only route registered on the dsh web server
-  (`/plugins/dsh-hardware-monitor/data`) that reads the OS's own sources
+  (`/plugins/dsh-vitals/data`) that reads the OS's own sources
   with **no privileged access** and returns JSON.
 - **Client** — a single self-contained bundle that polls the route and draws
   the panels with inline styles (no CSS pipeline, no assets).
@@ -38,7 +38,7 @@ The plugin ships as an npm package. From your dsh **web profile** (the pnpm
 workspace that backs your web GUI, e.g. `~/.dsh/profiles/web/`):
 
 ```bash
-pnpm add dsh-hardware-monitor
+pnpm add dsh-vitals
 ```
 
 Then add it to the profile's bundle list so the host loads it:
@@ -46,8 +46,8 @@ Then add it to the profile's bundle list so the host loads it:
 ```jsonc
 // package.json
 {
-  "dependencies": { "dsh-hardware-monitor": "^0.1.0" },
-  "dsh": { "profile": { "bundles": [ /* …existing… */ "dsh-hardware-monitor" ] } }
+  "dependencies": { "dsh-vitals": "^0.1.0" },
+  "dsh": { "profile": { "bundles": [ /* …existing… */ "dsh-vitals" ] } }
 }
 ```
 
@@ -64,7 +64,7 @@ has **zero runtime npm dependencies**.
 
 ```bash
 git clone <this repo>
-cd dsh-hardware-monitor
+cd dsh-vitals
 pnpm install
 node scripts/build.mjs     # emits lib/index.js + lib/client.js
 ```

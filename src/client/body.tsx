@@ -22,7 +22,7 @@ export interface HwData {
   gpus: HwGpu[]; gpuError: string | null; errors: string[]
 }
 
-const DATA_URL = '/plugins/dsh-hardware-monitor/data'
+const DATA_URL = '/plugins/dsh-vitals/data'
 const HISTORY = 40
 const POLL_MS = 1000
 

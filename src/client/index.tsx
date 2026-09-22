@@ -29,17 +29,17 @@ export const inject = ['slots', 'locale', 'sidebarRightTabs']
 export function apply(ctx: ClientContext): void {
   const t = ctx.locale.bind('hardwareMonitor')
 
-  ctx.effect(() => ctx.locale.register('hardwareMonitor', { zh, en }), 'dsh-hardware-monitor: dictionaries')
+  ctx.effect(() => ctx.locale.register('hardwareMonitor', { zh, en }), 'dsh-vitals: dictionaries')
 
   ctx.effect(
     () => ctx.sidebarRightTabs.register(hardwareDefinition(t)),
-    'dsh-hardware-monitor: hardware type',
+    'dsh-vitals: hardware type',
   )
 
   ctx.effect(
     () => ctx.slots.inject('sidebar.right.pane.tab', () =>
       ctx.slots.register({ name: 'sidebar.right.pane.tab', key: HARDWARE_ID, locale: 'hardwareMonitor' }, HardwareBody)),
-    'dsh-hardware-monitor: body seat',
+    'dsh-vitals: body seat',
   )
 
   // Title: a page-type tab shows its definition title on the chip; registering

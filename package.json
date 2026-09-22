@@ -1,5 +1,5 @@
 {
-  "name": "dsh-hardware-monitor",
+  "name": "dsh-vitals",
   "version": "0.1.0",
   "description": "Live hardware load panel for the DeepSeek Harness web GUI: a btop-style tab showing CPU load per core and overall, DRAM usage, CPU temperatures, and per-GPU temperature/load/power/VRAM. Reads /proc and nvidia-smi on the host and polls ~1s in the browser.",
   "type": "module",
@@ -26,11 +26,11 @@
   },
   "dshhub": {
     "schemaVersion": 1,
-    "displayName": "dsh-hardware-monitor",
+    "displayName": "Vitals",
     "summary": "Live btop-style hardware monitor tab: CPU per-core + overall load, DRAM, CPU temps, and per-GPU temp/load/power/VRAM.",
     "categories": ["System", "Web UI", "Observability"],
     "surfaces": ["host", "web"],
-    "capabilities": { "provides": ["service:hardware-monitor"] },
+    "capabilities": { "provides": ["service:vitals"] },
     "compatibility": { "dsh": ">=0.1.0-rc.5", "node": ">=20" },
     "permissions": {}
   },
@@ -43,7 +43,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TODO/dsh-hardware-monitor.git"
+    "url": "git+https://github.com/TODO/dsh-vitals.git"
   },
   "keywords": [
     "deepseek",
