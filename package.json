@@ -1,6 +1,6 @@
 {
   "name": "dsh-vitals",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Live hardware load panel for the DeepSeek Harness web GUI: a btop-style tab showing CPU load per core and overall, DRAM usage, CPU temperatures, and per-GPU temperature/load/power/VRAM. Reads /proc and nvidia-smi on the host and polls ~1s in the browser.",
   "type": "module",
   "main": "lib/index.js",
@@ -28,10 +28,24 @@
     "schemaVersion": 1,
     "displayName": "Vitals",
     "summary": "Live btop-style hardware monitor tab: CPU per-core + overall load, DRAM, CPU temps, and per-GPU temp/load/power/VRAM.",
-    "categories": ["System", "Web UI", "Observability"],
-    "surfaces": ["host", "web"],
-    "capabilities": { "provides": ["service:vitals"] },
-    "compatibility": { "dsh": ">=0.1.0-rc.5", "node": ">=20" },
+    "categories": [
+      "System",
+      "Web UI",
+      "Observability"
+    ],
+    "surfaces": [
+      "host",
+      "web"
+    ],
+    "capabilities": {
+      "provides": [
+        "service:vitals"
+      ]
+    },
+    "compatibility": {
+      "dsh": ">=0.1.0-rc.5",
+      "node": ">=20"
+    },
     "permissions": {}
   },
   "files": [
@@ -63,7 +77,10 @@
   "engines": {
     "node": ">=20"
   },
-  "os": ["darwin", "linux"],
+  "os": [
+    "darwin",
+    "linux"
+  ],
   "scripts": {
     "build": "node scripts/build.mjs"
   },
