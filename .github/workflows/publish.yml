@@ -1,0 +1,58 @@
+name: Auto-version & publish
+
+# Every push to main bumps the patch version, rebuilds lib/ (in case a commit
+# forgot to — see AGENTS.md's build-step warning), commits that back with
+# [skip ci], and publishes to npm. The [skip ci] guard + the actor check both
+# stop the bot's own push from re-triggering this workflow.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: >-
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.head_commit.message, '[skip ci]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Rebuild lib/ (safety net if a commit forgot)
+        run: node scripts/build.mjs
+
+      - name: Bump patch version (working tree only, not committed yet)
+        id: version
+        run: |
+          npm version patch --no-git-tag-version
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      # Publish BEFORE committing the bump: if this fails (e.g. NPM_TOKEN
+      # missing/invalid), the job stops here and nothing lands on git — no
+      # git/npm version drift from a bumped-but-never-published commit.
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit the now-published version bump + any rebuilt lib/
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json lib/
+          git commit -m "chore: release v${{ steps.version.outputs.version }} [skip ci]"
+          git tag "v${{ steps.version.outputs.version }}"
+          git push origin main --follow-tags
