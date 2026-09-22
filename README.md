@@ -63,7 +63,7 @@ Requires Node 20+. Dependencies are dev-only (esbuild); the published package
 has **zero runtime npm dependencies**.
 
 ```bash
-git clone <this repo>
+git clone https://github.com/JoblessJoe/dsh-vitals.git
 cd dsh-vitals
 pnpm install
 node scripts/build.mjs     # emits lib/index.js + lib/client.js
