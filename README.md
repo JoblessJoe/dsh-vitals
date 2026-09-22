@@ -45,23 +45,21 @@ supported; any CPU (core count and vendor) is handled.
 
 ## Install
 
-Not on the npm registry (yet) — install straight from GitHub, into your dsh
-**web profile** (`web` below is the profile name; use whichever profile backs
-your web GUI):
+From your dsh **web profile** (`web` below is the profile name; use whichever
+profile backs your web GUI):
 
 ```bash
-dsh plugin --profile web add github:JoblessJoe/dsh-vitals
+dsh plugin --profile web add dsh-vitals
 ```
 
 This installs the package into the profile and adds it to
 `dsh.profile.bundles` for you — no manual `package.json` editing. (No local
 `dsh` binary? Run the equivalent by hand from the profile directory, e.g.
-`~/.dsh/profiles/web/`: `pnpm add github:JoblessJoe/dsh-vitals`, then add
-`"dsh-vitals"` to that `package.json`'s `dsh.profile.bundles` array
-yourself.)
+`~/.dsh/profiles/web/`: `pnpm add dsh-vitals`, then add `"dsh-vitals"` to
+that `package.json`'s `dsh.profile.bundles` array yourself.)
 
-The repo ships its built `lib/` output committed, so no build step runs on
-install — nothing else to do before restarting.
+The published package ships its built `lib/` output, so no build step runs
+on install — nothing else to do before restarting.
 
 Restart your dsh web service and open the web GUI — see
 [Where it shows up](#where-it-shows-up) above for how to find it.
