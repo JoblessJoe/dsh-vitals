@@ -4,13 +4,14 @@
 // load, polled by the client tab at ~1s. Reads /proc and /sys (no privileged
 // access) and, when present, `nvidia-smi` for per-GPU figures. The CPU sampler
 // keeps the previous /proc/stat sample in memory so each poll returns deltas.
+// macOS and Windows go through node:os plus the readers in ./platform.
 //
 // This file only touches the ctx API + Node builtins — no dsh runtime packages.
 
 import { readdirSync, readFileSync } from 'node:fs'
-import { execFile } from 'node:child_process'
-import { cpus, freemem, loadavg, totalmem } from 'node:os'
+import { cpus, freemem, totalmem } from 'node:os'
 import type { ServerResponse } from 'node:http'
+import { NVIDIA_SMI, parseIoreg, parseVmStat, run, windowsTemps } from './platform'
 import type { Context } from '@deepseek-ai/cordis'
 // Type-only imports carry the webServer Context merge; erased at build.
 import type {} from '@deepseek-ai/dsh-host-webserver'
@@ -109,8 +110,8 @@ function sampleCpu(): CpuStat {
   }
 }
 
-/** Memory: Linux /proc/meminfo, else node:os total/free. */
-function sampleMem(): MemStat {
+/** Memory: Linux /proc/meminfo, macOS vm_stat, else node:os total/free. */
+async function sampleMem(): Promise<MemStat> {
   let totalKb: number | null = null, availKb: number | null = null
   try {
     const g: Record<string, number> = {}
@@ -121,9 +122,10 @@ function sampleMem(): MemStat {
     totalKb = g.MemTotal ?? null
     availKb = g.MemAvailable ?? (g.MemFree ?? 0) + (g.Buffers ?? 0) + (g.Cached ?? 0)
   } catch {
-    const t = totalmem(), f = freemem()
-    totalKb = Math.round(t / 1024)
-    availKb = Math.round(f / 1024)
+    // Windows' freemem() is already "available"; macOS needs vm_stat (see platform.ts).
+    const mac = process.platform === 'darwin' ? parseVmStat((await run('vm_stat', [])) ?? '') : null
+    totalKb = Math.round(totalmem() / 1024)
+    availKb = Math.round((mac ?? freemem()) / 1024)
   }
   if (totalKb == null || totalKb <= 0 || availKb == null) {
     return { totalKb: 0, availKb: 0, usedKb: 0, usedPct: 0 }
@@ -151,26 +153,38 @@ async function sampleTemp(): Promise<TempStat> {
       } catch { /* skip unreadable zone */ }
     }
   } catch { /* no thermal sysfs */ }
+  if (process.platform === 'win32') windowsTemps().forEach((temp, i) => zones.push({ name: `zone ${i}`, temp }))
+  // macOS exposes no CPU temperature without root (powermetrics / SMC), so it stays hidden.
   const overall = zones.length ? Math.max(...zones.map(z => z.temp)) : null
   return { overall, zones }
 }
 
 // --- GPUs (nvidia-smi) -------------------------------------------------
-function nvidiaSmi(): Promise<string | null> {
-  return new Promise(resolve => {
-    const args = [
-      '--query-gpu=index,name,temperature.gpu,utilization.gpu,power.draw,memory.used,memory.total',
-      '--format=csv,noheader,nounits',
-    ]
-    execFile('nvidia-smi', args, { timeout: 800 }, (err, stdout) => {
-      if (err) { resolve(null); return }
-      resolve(stdout.trim())
-    })
-  })
+const SMI_ARGS = [
+  '--query-gpu=index,name,temperature.gpu,utilization.gpu,power.draw,memory.used,memory.total',
+  '--format=csv,noheader,nounits',
+]
+let smiPath: string | null = null // the candidate that last worked
+
+async function nvidiaSmi(): Promise<string | null> {
+  for (const cmd of smiPath ? [smiPath] : NVIDIA_SMI) {
+    const out = await run(cmd, SMI_ARGS, 800)
+    if (out !== null) { smiPath = cmd; return out.trim() }
+  }
+  return null
+}
+
+/** Apple / other macOS GPUs via ioreg; no temperature or power without root. */
+async function macGpus(): Promise<GpuStat[]> {
+  const out = await run('ioreg', ['-r', '-d', '1', '-c', 'IOAccelerator'])
+  return (out ? parseIoreg(out) : []).map((g, index) => ({
+    index, name: g.name, temp: null, util: g.util, powerW: null, memUsedMb: g.memUsedMb, memTotalMb: null,
+  }))
 }
 
 async function sampleGpus(): Promise<{ gpus: GpuStat[]; gpuError: string | null }> {
   const out = await nvidiaSmi()
+  if ((out === null || out.length === 0) && process.platform === 'darwin') return { gpus: await macGpus(), gpuError: null }
   if (out === null || out.length === 0) return { gpus: [], gpuError: null }
   const gpus: GpuStat[] = []
   for (const line of out.split('\n')) {
@@ -195,7 +209,7 @@ async function sample(): Promise<HwData> {
   let temp: TempStat | undefined
   let gpus: GpuStat[] = [], gpuError: string | null = null
   try { cpu = sampleCpu() } catch (e) { errors.push(`cpu: ${(e as Error).message}`) }
-  try { mem = sampleMem() } catch (e) { errors.push(`mem: ${(e as Error).message}`) }
+  try { mem = await sampleMem() } catch (e) { errors.push(`mem: ${(e as Error).message}`) }
   try { temp = await sampleTemp() } catch (e) { errors.push(`temp: ${(e as Error).message}`) }
   try { ({ gpus, gpuError } = await sampleGpus()) } catch (e) { gpuError = (e as Error).message }
   return {
@@ -208,6 +222,16 @@ async function sample(): Promise<HwData> {
     gpuError,
     errors,
   }
+}
+
+// Every open view polls every 0.5 s (the header widget in each mounted
+// session plus the Hardware tab). Share one in-flight/recent sample so N
+// viewers cost one read and the CPU deltas span a real interval.
+const SAMPLE_TTL_MS = 400
+let last: { at: number; data: Promise<HwData> } | null = null
+function sharedSample(): Promise<HwData> {
+  if (!last || Date.now() - last.at > SAMPLE_TTL_MS) last = { at: Date.now(), data: sample() }
+  return last.data
 }
 
 // --- HTTP wiring -------------------------------------------------------
@@ -231,7 +255,7 @@ export function apply(ctx: Context, _config?: unknown): void {
       handler: async (req, res) => {
         if (req.headers['sec-fetch-site'] === 'cross-site') { send(res, 403, JSON.stringify({ ok: false, error: 'forbidden' })); return }
         if (req.method !== 'GET' && req.method !== 'HEAD') { send(res, 405, JSON.stringify({ ok: false, error: 'method not allowed' })); return }
-        const data = await sample()
+        const data = await sharedSample()
         send(res, 200, JSON.stringify(data))
       },
     })

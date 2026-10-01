@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/assets/banner.svg" alt="dsh-vitals: live CPU, memory, temperature and GPU load inside the DeepSeek Harness web GUI" width="100%">
+  <img src="https://raw.githubusercontent.com/JoblessJoe/dsh-vitals/main/.github/assets/banner.svg" alt="dsh-vitals: live CPU, memory, temperature and GPU load inside the DeepSeek Harness web GUI" width="100%">
 </p>
 
 <p align="center">
@@ -19,11 +19,11 @@ dsh plugin --profile web add dsh-vitals
 Restart dsh: CPU and GPU load appear in the session header, and the full **Hardware** tab sits next to Chat / Trajectory. Full details under [Install](#install).
 
 <p align="center">
-  <img src=".github/assets/hardware-tab.png" alt="The Hardware tab: per-core CPU load, memory and two GPUs" width="100%">
+  <img src="https://raw.githubusercontent.com/JoblessJoe/dsh-vitals/main/.github/assets/hardware-tab.png" alt="The Hardware tab: per-core CPU load, memory and two GPUs" width="100%">
 </p>
 
 <p align="center">
-  <img src=".github/assets/header-widget.png" alt="Mini CPU and GPU load widget in the session header" width="520">
+  <img src="https://raw.githubusercontent.com/JoblessJoe/dsh-vitals/main/.github/assets/header-widget.png" alt="Mini CPU and GPU load widget in the session header" width="520">
   <br><sub>The mini widget in the session header: always visible while you chat. Click it to jump to the full Hardware tab.</sub>
 </p>
 
@@ -55,16 +55,20 @@ Two access points, both live the moment the plugin is bundled — no setup:
 
 ### Platform support
 
-| Signal | Primary source | Fallback |
-| ------ | -------------- | -------- |
-| CPU load | `/proc/stat` (Linux) | `os.cpus()` deltas (macOS / other) |
-| Memory | `/proc/meminfo` (Linux) | `os.totalmem()` / `os.freemem()` |
-| CPU temp | `/sys/class/thermal` | hidden when absent |
-| GPUs | `nvidia-smi` (any count) | hidden when absent |
+Linux, macOS and Windows. Each signal uses the best unprivileged source the OS
+offers and hides itself when there is none:
 
-Everything degrades gracefully: a missing source simply hides that panel or
-shows a placeholder rather than breaking the tab. Any number of GPUs is
-supported; any CPU (core count and vendor) is handled.
+| Signal | Linux | macOS | Windows |
+| ------ | ----- | ----- | ------- |
+| CPU load (overall + per core) | `/proc/stat` | `os.cpus()` | `os.cpus()` |
+| Memory | `/proc/meminfo` | `vm_stat` (counts cache as available, like Activity Monitor) | `os.freemem()` |
+| CPU temperature | `/sys/class/thermal` | hidden (needs root) | WMI thermal zones, when the board exposes them |
+| NVIDIA GPUs | `nvidia-smi` | `nvidia-smi` | `nvidia-smi.exe` (PATH or `NVSMI` folder) |
+| Apple / other GPUs | — | `ioreg` utilisation + memory in use | — |
+
+Everything degrades gracefully: a missing source hides that panel or shows a
+placeholder instead of breaking the tab. Any number of GPUs and any CPU core
+count is supported.
 
 ## Install
 

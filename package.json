@@ -83,7 +83,8 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "release": "git pull origin main && npm publish"
+    "release": "git pull origin main && npm publish",
+    "test": "node test/platform.test.ts"
   },
   "devDependencies": {
     "esbuild": "^0.28.2"
