@@ -1,6 +1,31 @@
-# dsh-vitals
+<p align="center">
+  <img src=".github/assets/banner.svg" alt="dsh-vitals: live CPU, memory, temperature and GPU load inside the DeepSeek Harness web GUI" width="100%">
+</p>
 
-A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) Web-GUI plugin that shows **live hardware load** right in the web GUI — a self-contained, dependency-free companion to `btop`. Opens as a full tab next to Chat/Trajectory, or docked beside a session in the right sidebar.
+<p align="center">
+  <a href="https://www.npmjs.com/package/dsh-vitals"><img src="https://img.shields.io/npm/v/dsh-vitals?color=34d399&label=npm" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/dsh-vitals"><img src="https://img.shields.io/npm/dm/dsh-vitals?color=34d399" alt="npm downloads"></a>
+  <img src="https://img.shields.io/badge/dependencies-0-34d399" alt="zero runtime dependencies">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/JoblessJoe/dsh-vitals?color=34d399" alt="MIT license"></a>
+  <a href="https://github.com/awesome-dsh-plugin/awesome-dsh-plugin"><img src="https://img.shields.io/badge/awesome-dsh--plugin-fc60a8" alt="listed on awesome-dsh-plugin"></a>
+</p>
+
+A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) web GUI plugin that shows **live hardware load** right where you work: a self-contained, dependency-free companion to `btop`. Watch your GPU while your local model thinks, without leaving the chat.
+
+```bash
+dsh plugin --profile web add dsh-vitals
+```
+
+Restart dsh, then open the **Hardware** tab next to Chat / Trajectory. Full details under [Install](#install).
+
+<p align="center">
+  <img src=".github/assets/hardware-tab.png" alt="The Hardware tab: per-core CPU load, memory and two GPUs" width="100%">
+</p>
+
+<p align="center">
+  <img src=".github/assets/docked.png" alt="Hardware docked in the right sidebar next to a running chat" width="100%">
+  <br><sub>Docked next to a session: watch the box work while the model thinks.</sub>
+</p>
 
 ## What it shows
 
