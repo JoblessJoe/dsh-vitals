@@ -16,15 +16,15 @@ A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) web 
 dsh plugin --profile web add dsh-vitals
 ```
 
-Restart dsh, then open the **Hardware** tab next to Chat / Trajectory. Full details under [Install](#install).
+Restart dsh: CPU and GPU load appear in the session header, and the full **Hardware** tab sits next to Chat / Trajectory. Full details under [Install](#install).
 
 <p align="center">
   <img src=".github/assets/hardware-tab.png" alt="The Hardware tab: per-core CPU load, memory and two GPUs" width="100%">
 </p>
 
 <p align="center">
-  <img src=".github/assets/docked.png" alt="Hardware docked in the right sidebar next to a running chat" width="100%">
-  <br><sub>Docked next to a session: watch the box work while the model thinks.</sub>
+  <img src=".github/assets/header-widget.png" alt="Mini CPU and GPU load widget in the session header" width="520">
+  <br><sub>The mini widget in the session header: always visible while you chat. Click it to jump to the full Hardware tab.</sub>
 </p>
 
 ## What it shows
@@ -47,13 +47,11 @@ Data is sampled host-side on every poll (~0.5 s) and rendered live.
 
 Two access points, both live the moment the plugin is bundled — no setup:
 
+- **A mini widget in the session header**, next to the "⋯" menu: CPU and
+  per-GPU load as tiny bars, always visible while you chat. Hover for temps
+  and VRAM; click to jump to the full tab.
 - **A full `Hardware` tab** next to **Chat** / **Trajectory** at the top of
-  the conversation view. The dedicated way to watch the box while you're not
-  actively chatting.
-- **Docked in the right sidebar**, alongside a session: open the right
-  sidebar, click **+** (add tab), pick **Hardware** from the Guide list. Lets
-  you chat and watch load at the same time. (Every dsh "page type" plugin
-  opens this way — nothing dsh-vitals-specific about the click path.)
+  the conversation view: per-core CPU, memory, temperatures and every GPU.
 
 ### Platform support
 

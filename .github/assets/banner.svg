@@ -1,62 +1,43 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0b1220"/>
-      <stop offset="1" stop-color="#0f1d2e"/>
-    </linearGradient>
-    <linearGradient id="spark" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#34d399" stop-opacity=".45"/>
-      <stop offset="1" stop-color="#34d399" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="360" rx="20" fill="url(#bg)"/>
-
-  <!-- left: title -->
-  <text x="64" y="138" fill="#e6edf3" font-size="64" font-weight="700" letter-spacing="-1">dsh-vitals</text>
-  <text x="66" y="186" fill="#9fb3c8" font-size="24">Live CPU, memory, temperature and GPU load,</text>
-  <text x="66" y="218" fill="#9fb3c8" font-size="24">right inside the DeepSeek Harness web GUI.</text>
-  <g font-size="16" font-weight="600">
-    <rect x="66" y="252" width="132" height="34" rx="17" fill="#132a22" stroke="#34d399" stroke-opacity=".5"/>
-    <text x="132" y="274" fill="#6ee7b7" text-anchor="middle">btop-style</text>
-    <rect x="210" y="252" width="186" height="34" rx="17" fill="#132a22" stroke="#34d399" stroke-opacity=".5"/>
-    <text x="303" y="274" fill="#6ee7b7" text-anchor="middle">zero dependencies</text>
-    <rect x="408" y="252" width="124" height="34" rx="17" fill="#132a22" stroke="#34d399" stroke-opacity=".5"/>
-    <text x="470" y="274" fill="#6ee7b7" text-anchor="middle">no config</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="420" rx="20" fill="#0d1117"/>
+  <text x="60" y="150" fill="#e6edf3" font-size="62" font-weight="700" letter-spacing="-1">dsh-vitals</text>
+  <text x="62" y="198" fill="#8b949e" font-size="22">Live CPU, memory, temperature and GPU</text>
+  <text x="62" y="228" fill="#8b949e" font-size="22">load inside the DeepSeek Harness web GUI.</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="600">
+    <rect x="62" y="262" width="118" height="30" rx="15" fill="#161b22" stroke="#30363d"/><text x="121.0" y="282" fill="#3fb950" text-anchor="middle">btop-style</text>
+    <rect x="190" y="262" width="154" height="30" rx="15" fill="#161b22" stroke="#30363d"/><text x="267.0" y="282" fill="#3fb950" text-anchor="middle">0 dependencies</text>
+    <rect x="354" y="262" width="109" height="30" rx="15" fill="#161b22" stroke="#30363d"/><text x="408.5" y="282" fill="#3fb950" text-anchor="middle">no config</text>
   </g>
-
-  <!-- right: stylised panel -->
-  <g transform="translate(660 44)">
-    <rect width="480" height="272" rx="14" fill="#0a1019" stroke="#1f2d3d"/>
-    <circle cx="22" cy="20" r="5" fill="#f87171"/><circle cx="40" cy="20" r="5" fill="#fbbf24"/><circle cx="58" cy="20" r="5" fill="#34d399"/>
-    <text x="458" y="25" fill="#5b6b7d" font-size="13" text-anchor="end">Hardware</text>
-
-    <!-- CPU sparkline -->
-    <text x="22" y="62" fill="#9fb3c8" font-size="13" font-weight="600">CPU</text>
-    <text x="458" y="62" fill="#e6edf3" font-size="13" font-weight="700" text-anchor="end">47%  ·  61°C</text>
-    <path d="M22 118 L52 104 L82 110 L112 92 L142 98 L172 80 L202 88 L232 72 L262 84 L292 76 L322 90 L352 70 L382 78 L412 66 L458 74 L458 124 L22 124 Z" fill="url(#spark)"/>
-    <path d="M22 118 L52 104 L82 110 L112 92 L142 98 L172 80 L202 88 L232 72 L262 84 L292 76 L322 90 L352 70 L382 78 L412 66 L458 74" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linejoin="round"/>
-
-    <!-- per-core bars -->
-    <g fill="#1a2634">
-      <rect x="22" y="136" width="46" height="8" rx="4"/><rect x="76" y="136" width="46" height="8" rx="4"/><rect x="130" y="136" width="46" height="8" rx="4"/><rect x="184" y="136" width="46" height="8" rx="4"/>
-      <rect x="238" y="136" width="46" height="8" rx="4"/><rect x="292" y="136" width="46" height="8" rx="4"/><rect x="346" y="136" width="46" height="8" rx="4"/><rect x="400" y="136" width="58" height="8" rx="4"/>
-    </g>
-    <g fill="#34d399">
-      <rect x="22" y="136" width="30" height="8" rx="4"/><rect x="76" y="136" width="18" height="8" rx="4"/><rect x="130" y="136" width="40" height="8" rx="4"/><rect x="184" y="136" width="12" height="8" rx="4"/>
-      <rect x="238" y="136" width="26" height="8" rx="4"/><rect x="292" y="136" width="36" height="8" rx="4"/><rect x="346" y="136" width="14" height="8" rx="4"/><rect x="400" y="136" width="44" height="8" rx="4" fill="#fbbf24"/>
-    </g>
-
-    <!-- memory -->
-    <text x="22" y="178" fill="#9fb3c8" font-size="13" font-weight="600">Memory</text>
-    <text x="458" y="178" fill="#e6edf3" font-size="13" font-weight="700" text-anchor="end">21.4 / 64 GB</text>
-    <rect x="22" y="188" width="436" height="10" rx="5" fill="#1a2634"/>
-    <rect x="22" y="188" width="146" height="10" rx="5" fill="#60a5fa"/>
-
-    <!-- GPU -->
-    <text x="22" y="228" fill="#9fb3c8" font-size="13" font-weight="600">GPU 0</text>
-    <text x="458" y="228" fill="#e6edf3" font-size="13" font-weight="700" text-anchor="end">92% · 71°C · 187 W</text>
-    <rect x="22" y="238" width="436" height="10" rx="5" fill="#1a2634"/>
-    <rect x="22" y="238" width="372" height="10" rx="5" fill="#f472b6"/>
-    <text x="22" y="264" fill="#5b6b7d" font-size="12">VRAM 21.1 / 24 GB</text>
+  <g transform="translate(560 28)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+    <rect width="612" height="364" rx="12" fill="#0d1117" stroke="#30363d"/>
+    <text x="18" y="30" fill="#e6edf3" font-size="14" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, sans-serif">Chat</text><text x="66" y="30" fill="#8b949e" font-size="14" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, sans-serif">Trajectory</text><text x="152" y="30" fill="#58a6ff" font-size="14" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, sans-serif">Hardware</text>
+    <rect x="150" y="38" width="64" height="2" fill="#58a6ff"/>
+    <rect x="360" y="12" width="210" height="26" rx="6" fill="#161b22" stroke="#58a6ff" stroke-opacity=".6"/>
+    <text x="372" y="29" fill="#8b949e" font-size="11">CPU</text><rect x="400" y="22" width="28" height="5" rx="2.5" fill="#21262d"/><rect x="400" y="22" width="13.2" height="5" rx="2.5" fill="#3fb950"/><text x="434" y="29" fill="#c9d1d9" font-size="11">47%</text><text x="470" y="29" fill="#8b949e" font-size="11">GPU</text><rect x="498" y="22" width="28" height="5" rx="2.5" fill="#21262d"/><rect x="498" y="22" width="25.8" height="5" rx="2.5" fill="#f85149"/><text x="532" y="29" fill="#c9d1d9" font-size="11">92%</text>
+    <text x="590" y="30" fill="#8b949e" font-size="16" text-anchor="end">⋯</text>
+    <line x1="0" y1="48" x2="612" y2="48" stroke="#30363d"/>
+    <rect x="14" y="60" width="584" height="168" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="28" y="80" fill="#8b949e" font-size="10" font-weight="700" letter-spacing="1.2">CPU</text><text x="584" y="80" fill="#8b949e" font-size="10" text-anchor="end">Intel(R) Core(TM) i9-7900X CPU @ 3.30GHz</text>
+    <text x="28" y="112" fill="#d29922" font-size="26" font-weight="700">79%</text><text x="96" y="112" fill="#3fb950" font-size="20" font-weight="700">53°</text>
+    <text x="28" y="126" fill="#8b949e" font-size="10">Overall</text><text x="96" y="126" fill="#8b949e" font-size="10">Max</text>
+    <polygon points="400,120 400.0,108 409.2,96 418.4,92 427.6,90 436.8,89 446.0,88 455.2,89 464.4,91 473.6,90 482.8,89 492.0,88 501.2,89 510.4,88 519.6,90 528.8,89 538.0,88 547.2,89 556.4,90 565.6,89 574.8,88 574.8,120" fill="#58a6ff" fill-opacity=".15"/><polyline points="400.0,108 409.2,96 418.4,92 427.6,90 436.8,89 446.0,88 455.2,89 464.4,91 473.6,90 482.8,89 492.0,88 501.2,89 510.4,88 519.6,90 528.8,89 538.0,88 547.2,89 556.4,90 565.6,89 574.8,88" fill="none" stroke="#58a6ff" stroke-width="1.5"/>
+    <text x="28" y="146" fill="#8b949e" font-size="10">Per-core · 20</text>
+    <text x="40" y="162" fill="#8b949e" font-size="9" text-anchor="end">0</text><rect x="46" y="156" width="210" height="6" rx="3" fill="#21262d"/><rect x="46" y="156" width="199.5" height="6" rx="3" fill="#f85149"/><text x="290" y="162" fill="#8b949e" font-size="9" text-anchor="end">95%</text>
+    <text x="330" y="162" fill="#8b949e" font-size="9" text-anchor="end">1</text><rect x="336" y="156" width="210" height="6" rx="3" fill="#21262d"/><rect x="336" y="156" width="168.0" height="6" rx="3" fill="#d29922"/><text x="580" y="162" fill="#8b949e" font-size="9" text-anchor="end">80%</text>
+    <text x="40" y="176" fill="#8b949e" font-size="9" text-anchor="end">2</text><rect x="46" y="170" width="210" height="6" rx="3" fill="#21262d"/><rect x="46" y="170" width="155.4" height="6" rx="3" fill="#d29922"/><text x="290" y="176" fill="#8b949e" font-size="9" text-anchor="end">74%</text>
+    <text x="330" y="176" fill="#8b949e" font-size="9" text-anchor="end">3</text><rect x="336" y="170" width="210" height="6" rx="3" fill="#21262d"/><rect x="336" y="170" width="142.8" height="6" rx="3" fill="#d29922"/><text x="580" y="176" fill="#8b949e" font-size="9" text-anchor="end">68%</text>
+    <text x="40" y="190" fill="#8b949e" font-size="9" text-anchor="end">4</text><rect x="46" y="184" width="210" height="6" rx="3" fill="#21262d"/><rect x="46" y="184" width="199.5" height="6" rx="3" fill="#f85149"/><text x="290" y="190" fill="#8b949e" font-size="9" text-anchor="end">95%</text>
+    <text x="330" y="190" fill="#8b949e" font-size="9" text-anchor="end">5</text><rect x="336" y="184" width="210" height="6" rx="3" fill="#21262d"/><rect x="336" y="184" width="159.6" height="6" rx="3" fill="#d29922"/><text x="580" y="190" fill="#8b949e" font-size="9" text-anchor="end">76%</text>
+    <text x="40" y="204" fill="#8b949e" font-size="9" text-anchor="end">6</text><rect x="46" y="198" width="210" height="6" rx="3" fill="#21262d"/><rect x="46" y="198" width="161.7" height="6" rx="3" fill="#d29922"/><text x="290" y="204" fill="#8b949e" font-size="9" text-anchor="end">77%</text>
+    <text x="330" y="204" fill="#8b949e" font-size="9" text-anchor="end">7</text><rect x="336" y="198" width="210" height="6" rx="3" fill="#21262d"/><rect x="336" y="198" width="157.5" height="6" rx="3" fill="#d29922"/><text x="580" y="204" fill="#8b949e" font-size="9" text-anchor="end">75%</text>
+    <text x="40" y="218" fill="#8b949e" font-size="9" text-anchor="end">8</text><rect x="46" y="212" width="210" height="6" rx="3" fill="#21262d"/><rect x="46" y="212" width="186.9" height="6" rx="3" fill="#f85149"/><text x="290" y="218" fill="#8b949e" font-size="9" text-anchor="end">89%</text>
+    <text x="330" y="218" fill="#8b949e" font-size="9" text-anchor="end">9</text><rect x="336" y="212" width="210" height="6" rx="3" fill="#21262d"/><rect x="336" y="212" width="180.6" height="6" rx="3" fill="#f85149"/><text x="580" y="218" fill="#8b949e" font-size="9" text-anchor="end">86%</text>
+    <rect x="14" y="238" width="584" height="46" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="28" y="256" fill="#8b949e" font-size="10" font-weight="700" letter-spacing="1.2">MEMORY</text><text x="584" y="258" fill="#d29922" font-size="16" font-weight="700" text-anchor="end">65%</text>
+    <text x="28" y="275" fill="#8b949e" font-size="10">Used</text><rect x="64" y="269" width="400" height="6" rx="3" fill="#21262d"/><rect x="64" y="269" width="260" height="6" rx="3" fill="#58a6ff"/><text x="584" y="276" fill="#8b949e" font-size="10" text-anchor="end">59.3 / 91.7 GB</text>
+    <rect x="14" y="294" width="584" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+    <text x="28" y="312" fill="#8b949e" font-size="10" font-weight="700" letter-spacing="1.2">GPU 0</text><text x="584" y="312" fill="#8b949e" font-size="10" text-anchor="end">Tesla P40</text>
+    <text x="28" y="331" fill="#8b949e" font-size="10">Load</text><rect x="64" y="325" width="470" height="6" rx="3" fill="#21262d"/><rect x="64" y="325" width="432" height="6" rx="3" fill="#f85149"/><text x="584" y="332" fill="#8b949e" font-size="10" text-anchor="end">92%</text>
+    <text x="28" y="346" fill="#8b949e" font-size="10">VRAM</text><rect x="64" y="340" width="400" height="6" rx="3" fill="#21262d"/><rect x="64" y="340" width="367" height="6" rx="3" fill="#58a6ff"/><text x="584" y="347" fill="#8b949e" font-size="10" text-anchor="end">21100 / 23040 MB</text>
   </g>
 </svg>

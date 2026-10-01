@@ -4,8 +4,6 @@
 /** Simplified Chinese dictionary and key-set source of truth. */
 export const zh = {
   'tab.title': '硬件',
-  'guide.title': '硬件监控',
-  'guide.description': '实时 CPU / 内存 / 温度 / GPU 负载',
   'section.cpu': 'CPU',
   'section.mem': '内存',
   'section.temp': 'CPU 温度',
@@ -22,13 +20,12 @@ export const zh = {
   'loading': '读取中…',
   'error': '读取失败',
   'retry': '重试',
+  'mini.open': '打开硬件监控',
 } satisfies Record<string, string>
 
 /** English dictionary. */
 export const en = {
   'tab.title': 'Hardware',
-  'guide.title': 'Hardware',
-  'guide.description': 'Live CPU / memory / temps / GPU load',
   'section.cpu': 'CPU',
   'section.mem': 'Memory',
   'section.temp': 'CPU Temp',
@@ -45,6 +42,7 @@ export const en = {
   'loading': 'Loading…',
   'error': 'Read failed',
   'retry': 'Retry',
+  'mini.open': 'Open hardware monitor',
 } satisfies typeof zh
 
 export type HardwareMonitorKey = keyof typeof zh
