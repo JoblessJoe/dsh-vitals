@@ -12,7 +12,7 @@ Pages throttled:                              0.
 Pages wired down:                        150000.
 Pages purgeable:                           1000.
 `
-assert.equal(parseVmStat(vmStat), (10000 + 200000 + 5000 + 1000) * 16384)
+assert.equal(parseVmStat(vmStat), (10000 + 200000 + 5000) * 16384)
 assert.equal(parseVmStat('garbage'), null)
 
 const ioreg = `+-o AGXAcceleratorG14X  <class AGXAcceleratorG14X, id 0x100000356, registered, matched, active, busy 0 (0 ms), retain 49>

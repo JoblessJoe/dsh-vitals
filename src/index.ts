@@ -99,7 +99,7 @@ function sampleCpu(): CpuStat {
   } catch {
     // Non-Linux fallback: node:os per-core time deltas.
     const now = cpus().map(c => {
-      const t = [c.user, c.nice, c.sys, c.idle, c.irq]
+      const t = [c.times.user, c.times.nice, c.times.sys, c.times.idle, c.times.irq]
       return { t, idle: t[3] }
     })
     const prev = prevCpuTimes

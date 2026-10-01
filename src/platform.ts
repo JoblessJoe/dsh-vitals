@@ -17,15 +17,16 @@ export function run(cmd: string, args: string[], timeout = 1500): Promise<string
 
 // --- macOS memory ------------------------------------------------------
 // os.freemem() on macOS is only "Pages free", so cached files look like used
-// memory and the bar sits near 100%. Activity Monitor's "available" is
-// free + inactive + speculative + purgeable pages.
+// memory and the bar sits near 100%. Available = free + inactive + speculative
+// pages (vm_stat's "free" excludes speculative). Purgeable pages are left out:
+// they already sit in the active/inactive counts.
 
 /** Available bytes from `vm_stat` output, or null if it doesn't parse. */
 export function parseVmStat(out: string): number | null {
   const page = Number(out.match(/page size of (\d+) bytes/)?.[1])
   if (!Number.isFinite(page) || page <= 0) return null
   const pages = (key: string): number => Number(out.match(new RegExp(`^${key}:\\s+(\\d+)`, 'm'))?.[1] ?? 0)
-  const avail = pages('Pages free') + pages('Pages inactive') + pages('Pages speculative') + pages('Pages purgeable')
+  const avail = pages('Pages free') + pages('Pages inactive') + pages('Pages speculative')
   return avail > 0 ? avail * page : null
 }
 

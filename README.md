@@ -62,7 +62,7 @@ offers and hides itself when there is none:
 | ------ | ----- | ----- | ------- |
 | CPU load (overall + per core) | `/proc/stat` | `os.cpus()` | `os.cpus()` |
 | Memory | `/proc/meminfo` | `vm_stat` (counts cache as available, like Activity Monitor) | `os.freemem()` |
-| CPU temperature | `/sys/class/thermal` | hidden (needs root) | WMI thermal zones, when the board exposes them |
+| CPU temperature | `/sys/class/thermal` | hidden (needs root) | WMI thermal zones, when the board exposes them (often needs dsh running as admin) |
 | NVIDIA GPUs | `nvidia-smi` | `nvidia-smi` | `nvidia-smi.exe` (PATH or `NVSMI` folder) |
 | Apple / other GPUs | — | `ioreg` utilisation + memory in use | — |
 
