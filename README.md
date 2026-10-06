@@ -7,6 +7,7 @@
   <a href="https://www.npmjs.com/package/dsh-vitals"><img src="https://img.shields.io/npm/dm/dsh-vitals?color=34d399" alt="npm downloads"></a>
   <img src="https://img.shields.io/badge/dependencies-0-34d399" alt="zero runtime dependencies">
   <a href="LICENSE"><img src="https://img.shields.io/github/license/JoblessJoe/dsh-vitals?color=34d399" alt="MIT license"></a>
+  <a href="https://joblessjoe.com/dsh-vitals"><img src="https://img.shields.io/badge/website-joblessjoe.com-34d399" alt="project page on joblessjoe.com"></a>
   <a href="https://github.com/awesome-dsh-plugin/awesome-dsh-plugin"><img src="https://img.shields.io/badge/awesome-dsh--plugin-fc60a8" alt="listed on awesome-dsh-plugin"></a>
 </p>
 
