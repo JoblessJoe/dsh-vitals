@@ -1,6 +1,6 @@
 {
   "name": "dsh-vitals",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Live hardware load panel for the DeepSeek Harness web GUI: a btop-style tab showing CPU load per core and overall, DRAM usage, CPU temperatures, and per-GPU temperature/load/power/VRAM. Reads /proc and nvidia-smi on the host and polls ~1s in the browser.",
   "homepage": "https://joblessjoe.com/dsh-vitals",
   "author": "Johannes Tebbert <info@joblessjoe.com> (https://joblessjoe.com)",
