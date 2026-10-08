@@ -73,7 +73,10 @@
     "cpu",
     "gpu",
     "nvidia",
-    "observability"
+    "observability",
+    "硬件监控",
+    "GPU监控",
+    "dsh插件"
   ],
   "license": "MIT",
   "engines": {

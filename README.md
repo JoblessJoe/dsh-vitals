@@ -11,6 +11,8 @@
   <a href="https://github.com/awesome-dsh-plugin/awesome-dsh-plugin"><img src="https://img.shields.io/badge/awesome-dsh--plugin-fc60a8" alt="listed on awesome-dsh-plugin"></a>
 </p>
 
+> **中文简介** · DeepSeek Harness (dsh) Web 界面插件：像 btop 一样实时显示硬件负载，无需离开聊天。会话标题栏有迷你小组件，Chat / Trajectory 旁边有完整的 Hardware 标签页：CPU 总负载和每核负载、内存、温度，以及每块 GPU 的温度、负载、功耗和显存。支持 Linux、macOS、Windows，零运行时依赖，无需配置。<br>安装：`dsh plugin --profile web add dsh-vitals`
+
 A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) web GUI plugin that shows **live hardware load** right where you work: a self-contained, dependency-free companion to `btop`. Watch your GPU while your local model thinks, without leaving the chat.
 
 ```bash
