@@ -59,7 +59,9 @@ Two access points, both live the moment the plugin is bundled — no setup:
 ### Platform support
 
 Linux, macOS and Windows. Each signal uses the best unprivileged source the OS
-offers and hides itself when there is none:
+offers and hides itself when there is none. Linux is tested live; the macOS and
+Windows readers are only checked against sample output (`npm test`) so far.
+Reports from real Macs and Windows machines are very welcome.
 
 | Signal | Linux | macOS | Windows |
 | ------ | ----- | ----- | ------- |
