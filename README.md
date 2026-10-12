@@ -11,15 +11,15 @@
   <a href="https://github.com/awesome-dsh-plugin/awesome-dsh-plugin"><img src="https://img.shields.io/badge/awesome-dsh--plugin-fc60a8" alt="listed on awesome-dsh-plugin"></a>
 </p>
 
-> **中文简介** · DeepSeek Harness (dsh) Web 界面插件：像 btop 一样实时显示硬件负载，无需离开聊天。会话标题栏有迷你小组件，Chat / Trajectory 旁边有完整的 Hardware 标签页：CPU 总负载和每核负载、内存、温度，以及每块 GPU 的温度、负载、功耗和显存。支持 Linux、macOS、Windows，零运行时依赖，无需配置。<br>安装：`dsh plugin --profile web add dsh-vitals`
+> **中文简介** · DeepSeek Harness (dsh) Web 界面插件：像 btop 一样实时显示硬件负载，无需离开聊天。会话标题栏有迷你小组件，Chat / Trajectory 旁边有完整的 Hardware 标签页：CPU 总负载和每核负载、内存、温度，以及每块 GPU 的温度、负载、功耗和显存。支持 Linux、macOS、Windows，零运行时依赖，无需配置。<br>安装：`npx @deepseek-ai/dsh plugin --profile web add dsh-vitals`（web 配置实时加载，无需重启）
 
 A [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) web GUI plugin that shows **live hardware load** right where you work: a self-contained, dependency-free companion to `btop`. Watch your GPU while your local model thinks, without leaving the chat.
 
 ```bash
-dsh plugin --profile web add dsh-vitals
+npx @deepseek-ai/dsh plugin --profile web add dsh-vitals
 ```
 
-Restart dsh: CPU and GPU load appear in the session header, and the full **Hardware** tab sits next to Chat / Trajectory. Full details under [Install](#install).
+No restart needed (the web profile reloads live). Reload the browser tab: CPU and GPU load appear in the session header, and the full **Hardware** tab sits next to Chat / Trajectory. Full details under [Install](#install).
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/JoblessJoe/dsh-vitals/main/.github/assets/hardware-tab.png" alt="The Hardware tab: per-core CPU load, memory and two GPUs" width="100%">
@@ -75,11 +75,12 @@ count is supported.
 
 ## Install
 
-From your dsh **web profile** (`web` below is the profile name; use whichever
-profile backs your web GUI):
+Into your dsh **web profile** (`web` below is the profile name; use whichever
+profile backs your web GUI). From a source checkout, use `pnpm dsh` instead of
+`npx @deepseek-ai/dsh`:
 
 ```bash
-dsh plugin --profile web add dsh-vitals
+npx @deepseek-ai/dsh plugin --profile web add dsh-vitals
 ```
 
 This installs the package into the profile and adds it to
@@ -89,13 +90,11 @@ This installs the package into the profile and adds it to
 that `package.json`'s `dsh.profile.bundles` array yourself.)
 
 The published package ships its built `lib/` output, so no build step runs
-on install — nothing else to do before restarting.
+on install.
 
-Restart your dsh web service and open the web GUI — see
+No restart: the shipped `web` profile reloads live, so the plugin shows up under
+**Plugins** right away. Reload the browser tab — see
 [Where it shows up](#where-it-shows-up) above for how to find it.
-
-> New bundles are registered from the profile's `bundles` array, so a one-time
-> service restart is required the first time you add it.
 
 ## Building from source
 
