@@ -1,6 +1,6 @@
 name: Auto-version
 
-# Every push to main bumps the patch version, rebuilds lib/ (in case a commit
+# Every push to main runs the tests, then bumps the patch version, rebuilds lib/ (in case a commit
 # forgot to — see AGENTS.md's build-step warning), commits that back, tags
 # it, and cuts a GitHub Release. GitHub-only — no npm publish, no token to
 # maintain; npm publish stays a manual `npm publish` when actually wanted.
@@ -27,10 +27,13 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
+
+      - name: Run tests
+        run: npm test
 
       - name: Rebuild lib/ (safety net if a commit forgot)
         run: node scripts/build.mjs
