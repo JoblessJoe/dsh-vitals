@@ -1,8 +1,4 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/JoblessJoe/dsh-vitals/main/icon.svg" alt="dsh-vitals icon" width="96" height="96">
-</p>
-
-<p align="center">
   <img src="https://raw.githubusercontent.com/JoblessJoe/dsh-vitals/main/.github/assets/banner.svg" alt="dsh-vitals: live CPU, memory, temperature and GPU load inside the DeepSeek Harness web GUI" width="100%">
 </p>
 
